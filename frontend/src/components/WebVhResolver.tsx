@@ -43,20 +43,21 @@ function healthErrorMessage(err: unknown): string {
 }
 
 async function probeEngines(): Promise<EngineHealth[]> {
-  const next: EngineHealth[] = []
-  for (const e of ENGINES) {
-    try {
-      const h = await fetchHealth(e)
-      next.push({ engine: e, ok: true, health: h })
-    } catch (err) {
-      next.push({
-        engine: e,
-        ok: false,
-        detail: healthErrorMessage(err),
-      })
-    }
-  }
-  return next
+  const results = await Promise.all(
+    ENGINES.map(async (e) => {
+      try {
+        const h = await fetchHealth(e)
+        return { engine: e, ok: true as const, health: h }
+      } catch (err) {
+        return {
+          engine: e,
+          ok: false as const,
+          detail: healthErrorMessage(err),
+        }
+      }
+    }),
+  )
+  return results
 }
 
 function formatJson(value: unknown): string {
@@ -93,6 +94,8 @@ export function WebVhResolver() {
     ENGINES.map((e) => ({ engine: e, ok: false })),
   )
   const [healthChecking, setHealthChecking] = useState(false)
+  /** False until the first in-app probe finishes (avoids three stuck “Checking…” rows). */
+  const [healthReady, setHealthReady] = useState(false)
   const [lastHealthAt, setLastHealthAt] = useState<Date | null>(null)
 
   const [singleResult, setSingleResult] = useState<{
@@ -115,7 +118,17 @@ export function WebVhResolver() {
       const next = await probeEngines()
       setHealth(next)
       setLastHealthAt(new Date())
+    } catch {
+      setHealth(
+        ENGINES.map((e) => ({
+          engine: e,
+          ok: false,
+          detail: 'Health probe failed unexpectedly',
+        })),
+      )
+      setLastHealthAt(new Date())
     } finally {
+      setHealthReady(true)
       setHealthChecking(false)
     }
   }, [])
@@ -124,9 +137,21 @@ export function WebVhResolver() {
     // Do not cancel on unmount: React Strict Mode remounts would discard a finished
     // probe and leave the initial { ok: false } placeholders (shown as "down").
     void (async () => {
-      const next = await probeEngines()
-      setHealth(next)
-      setLastHealthAt(new Date())
+      try {
+        const next = await probeEngines()
+        setHealth(next)
+      } catch {
+        setHealth(
+          ENGINES.map((e) => ({
+            engine: e,
+            ok: false,
+            detail: 'Health probe failed unexpectedly',
+          })),
+        )
+      } finally {
+        setLastHealthAt(new Date())
+        setHealthReady(true)
+      }
     })()
   }, [])
 
@@ -327,29 +352,35 @@ export function WebVhResolver() {
             <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
               Engine health
             </p>
-            <div className="flex flex-wrap gap-2">
-              {health.map((h) => (
-                <Badge
-                  key={h.engine}
-                  className="h-auto min-w-0 max-w-full py-1.5 text-left font-mono text-xs"
-                  variant={h.ok ? 'default' : 'outline'}
-                >
-                  {h.ok && h.health ? (
-                    <span className="font-medium">
-                      {h.engine} - {displayLibraryVersion(h.health)}
-                    </span>
-                  ) : (
-                    <span className="flex flex-col gap-0.5">
-                      <span className="font-medium">{h.engine}</span>
-                      <span className="font-normal text-[10px] leading-snug opacity-90">
-                        {h.detail ??
-                          (lastHealthAt === null ? 'Checking…' : 'No response from resolver')}
+            {!healthReady ? (
+              <p className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Loader2 className="size-4 shrink-0 animate-spin" aria-hidden />
+                Checking resolver backends…
+              </p>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {health.map((h) => (
+                  <Badge
+                    key={h.engine}
+                    className="h-auto min-w-0 max-w-full py-1.5 text-left font-mono text-xs"
+                    variant={h.ok ? 'default' : 'outline'}
+                  >
+                    {h.ok && h.health ? (
+                      <span className="font-medium">
+                        {h.engine} - {displayLibraryVersion(h.health)}
                       </span>
-                    </span>
-                  )}
-                </Badge>
-              ))}
-            </div>
+                    ) : (
+                      <span className="flex flex-col gap-0.5">
+                        <span className="font-medium">{h.engine}</span>
+                        <span className="font-normal text-[10px] leading-snug opacity-90">
+                          {h.detail ?? 'No response from resolver'}
+                        </span>
+                      </span>
+                    )}
+                  </Badge>
+                ))}
+              </div>
+            )}
             {lastHealthAt && health.every((h) => !h.ok) ? (
               <Alert className="mt-3 border-amber-500/40 bg-amber-500/5">
                 <Info className="size-4 text-amber-600 dark:text-amber-400" aria-hidden />
