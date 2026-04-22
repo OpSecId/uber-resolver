@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { AlertCircle, GitBranch, Loader2, Sparkles } from 'lucide-react'
+import { AlertCircle, GitBranch, Info, Loader2, Sparkles } from 'lucide-react'
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
@@ -34,7 +34,7 @@ function healthErrorMessage(err: unknown): string {
     return 'Timed out (is the resolver running?)'
   }
   if (err instanceof TypeError) {
-    return 'Network error (check dev proxy / CORS)'
+    return 'Network error — start resolvers on 8081–8083, or run docker compose up from the repo root (Vite dev proxy only when using npm run dev).'
   }
   if (err instanceof Error) {
     return err.message
@@ -112,17 +112,13 @@ export function WebVhResolver() {
   }, [])
 
   useEffect(() => {
-    let cancelled = false
-    ;(async () => {
+    // Do not cancel on unmount: React Strict Mode remounts would discard a finished
+    // probe and leave the initial { ok: false } placeholders (shown as "down").
+    void (async () => {
       const next = await probeEngines()
-      if (!cancelled) {
-        setHealth(next)
-        setLastHealthAt(new Date())
-      }
+      setHealth(next)
+      setLastHealthAt(new Date())
     })()
-    return () => {
-      cancelled = true
-    }
   }, [])
 
   const canResolve = useMemo(() => did.trim().length > 0 && !loading, [did, loading])
@@ -339,12 +335,31 @@ export function WebVhResolver() {
                     </span>
                   ) : !h.ok ? (
                     <span className="block font-normal text-[10px] leading-snug">
-                      {h.detail ?? 'down'}
+                      {h.detail ??
+                        (lastHealthAt === null ? 'Checking…' : 'No response from resolver')}
                     </span>
                   ) : null}
                 </Badge>
               ))}
             </div>
+            {lastHealthAt && health.every((h) => !h.ok) ? (
+              <Alert className="mt-3 border-amber-500/40 bg-amber-500/5">
+                <Info className="size-4 text-amber-600 dark:text-amber-400" aria-hidden />
+                <AlertTitle className="text-amber-900 dark:text-amber-100">
+                  No engines answered
+                </AlertTitle>
+                <AlertDescription className="text-xs text-amber-950/80 dark:text-amber-50/90">
+                  From the repository root run{' '}
+                  <code className="rounded bg-background/80 px-1 py-0.5 font-mono">
+                    docker compose up --build
+                  </code>{' '}
+                  or start each resolver on ports <strong>8081</strong>–<strong>8083</strong>, then use{' '}
+                  <code className="rounded bg-background/80 px-1 py-0.5 font-mono">npm run dev</code>{' '}
+                  in <code className="font-mono">frontend/</code> (the static preview server has no API
+                  proxy).
+                </AlertDescription>
+              </Alert>
+            ) : null}
             {lastHealthAt ? (
               <p className="mt-2 text-xs text-muted-foreground">
                 Last check:{' '}
