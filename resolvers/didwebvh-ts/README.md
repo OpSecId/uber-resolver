@@ -23,3 +23,5 @@ docker run --rm -p 8083:8083 uber-resolver-didwebvh-ts
 ## Dependency
 
 Bump **`didwebvh-ts`** in `package.json` when upgrading.
+
+Resolution passes an **Ed25519 verifier** (`@stablelib/ed25519`) into `resolveDID` so log / witness proofs can be checked (the library throws if `verifier` is omitted).

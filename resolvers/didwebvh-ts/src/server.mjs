@@ -9,6 +9,8 @@ import { fileURLToPath } from 'node:url';
 import express from 'express';
 import { resolveDID } from 'didwebvh-ts';
 
+import { ed25519Verifier } from './verifier.mjs';
+
 const ENGINE = 'didwebvh-ts';
 const PORT = Number(process.env.PORT || 8083);
 
@@ -72,7 +74,7 @@ async function handleResolve(did, res) {
       }),
     );
   }
-  const result = await resolveDID(trimmed, {});
+  const result = await resolveDID(trimmed, { verifier: ed25519Verifier });
   const body = toW3c(result);
   return res.status(httpStatus(body)).json(body);
 }

@@ -16,6 +16,7 @@
     "dev": "node --watch src/server.mjs"
   },
   "dependencies": {
+    "@stablelib/ed25519": "^2.0.2",
     "didwebvh-ts": "^2.7.3",
     "express": "^5.0.1"
   }
