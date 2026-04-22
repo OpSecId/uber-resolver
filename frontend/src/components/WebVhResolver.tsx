@@ -63,13 +63,13 @@ function formatJson(value: unknown): string {
   return JSON.stringify(value, null, 2)
 }
 
-/** Library / upstream version for display (e.g. `didwebvh-rs - 0.5`). */
+/** Upstream library version for display (e.g. `didwebvh-rs - 0.5`). */
 function displayLibraryVersion(health: HealthResponse): string {
   const lib = health.libraryVersion?.trim()
   if (lib && lib !== 'unknown') {
     return lib
   }
-  return health.serviceVersion?.trim() || '—'
+  return '—'
 }
 
 function extractDocParts(payload: ResolvePayload | string | null) {

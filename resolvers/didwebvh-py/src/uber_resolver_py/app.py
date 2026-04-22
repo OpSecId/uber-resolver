@@ -14,13 +14,6 @@ app = FastAPI(title="uber-resolver-didwebvh-py", version="0.1.0")
 ENGINE = "didwebvh-py"
 
 
-def _service_version() -> str:
-    try:
-        return version("uber-resolver-didwebvh-py")
-    except PackageNotFoundError:
-        return app.version
-
-
 def _library_version() -> str:
     try:
         return version("did-webvh")
@@ -47,7 +40,6 @@ async def health() -> dict[str, str]:
     return {
         "status": "ok",
         "engine": ENGINE,
-        "serviceVersion": _service_version(),
         "libraryVersion": _library_version(),
     }
 

@@ -30,7 +30,6 @@ struct ResolveQuery {
 struct Health {
     status: &'static str,
     engine: &'static str,
-    service_version: &'static str,
     library_version: &'static str,
 }
 
@@ -120,7 +119,6 @@ async fn health() -> Json<Health> {
     Json(Health {
         status: "ok",
         engine: "didwebvh-rs",
-        service_version: env!("CARGO_PKG_VERSION"),
         library_version: env!("DIDWEBVH_RS_DECLARED_VERSION"),
     })
 }

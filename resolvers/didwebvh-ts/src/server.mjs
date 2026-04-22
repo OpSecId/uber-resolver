@@ -14,15 +14,7 @@ const PORT = Number(process.env.PORT || 8083);
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-let SERVICE_VERSION = '0.1.0';
 let LIBRARY_VERSION = 'unknown';
-try {
-  SERVICE_VERSION = JSON.parse(
-    readFileSync(join(__dirname, '../package.json'), 'utf8'),
-  ).version;
-} catch {
-  /* ignore */
-}
 try {
   LIBRARY_VERSION = JSON.parse(
     readFileSync(join(__dirname, '../node_modules/didwebvh-ts/package.json'), 'utf8'),
@@ -62,7 +54,6 @@ app.get('/health', (_req, res) => {
   res.json({
     status: 'ok',
     engine: ENGINE,
-    serviceVersion: SERVICE_VERSION,
     libraryVersion: LIBRARY_VERSION,
   });
 });
