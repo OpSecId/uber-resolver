@@ -26,6 +26,12 @@ paths:
                   engine:
                     type: string
                     enum: [didwebvh-rs, didwebvh-py, didwebvh-ts]
+                  serviceVersion:
+                    type: string
+                    description: uber-resolver microservice semver
+                  libraryVersion:
+                    type: string
+                    description: upstream didwebvh-* library version (resolved or declared)
   /resolve:
     post:
       summary: Resolve a did:webvh DID

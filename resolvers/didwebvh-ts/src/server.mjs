@@ -3,11 +3,27 @@
  * @see https://github.com/decentralized-identity/didwebvh-ts
  */
 
+import { createRequire } from 'node:module';
 import express from 'express';
 import { resolveDID } from 'didwebvh-ts';
 
+const require = createRequire(import.meta.url);
+
 const ENGINE = 'didwebvh-ts';
 const PORT = Number(process.env.PORT || 8083);
+
+let SERVICE_VERSION = '0.1.0';
+let LIBRARY_VERSION = 'unknown';
+try {
+  ({ version: SERVICE_VERSION } = require('../package.json'));
+} catch {
+  /* ignore */
+}
+try {
+  ({ version: LIBRARY_VERSION } = require('didwebvh-ts/package.json'));
+} catch {
+  /* ignore */
+}
 
 function toW3c(result) {
   const { did, doc, controlled, meta } = result;
@@ -37,7 +53,12 @@ const app = express();
 app.use(express.json({ limit: '64kb' }));
 
 app.get('/health', (_req, res) => {
-  res.json({ status: 'ok', engine: ENGINE });
+  res.json({
+    status: 'ok',
+    engine: ENGINE,
+    serviceVersion: SERVICE_VERSION,
+    libraryVersion: LIBRARY_VERSION,
+  });
 });
 
 async function handleResolve(did, res) {

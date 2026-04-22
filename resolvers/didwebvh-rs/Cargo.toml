@@ -2,6 +2,7 @@
 name = "uber-resolver-didwebvh-rs"
 version = "0.1.0"
 edition = "2021"
+build = "build.rs"
 rust-version = "1.94"
 license = "Apache-2.0"
 description = "Thin HTTP resolver for did:webvh using didwebvh-rs"

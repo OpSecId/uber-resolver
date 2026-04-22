@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+from importlib.metadata import PackageNotFoundError, version
 
 from did_webvh.resolver import resolve as resolve_did_url
 from fastapi import FastAPI, HTTPException
@@ -11,6 +12,20 @@ from pydantic import BaseModel, Field
 
 app = FastAPI(title="uber-resolver-didwebvh-py", version="0.1.0")
 ENGINE = "didwebvh-py"
+
+
+def _service_version() -> str:
+    try:
+        return version("uber-resolver-didwebvh-py")
+    except PackageNotFoundError:
+        return app.version
+
+
+def _library_version() -> str:
+    try:
+        return version("did-webvh")
+    except PackageNotFoundError:
+        return "unknown"
 
 
 class ResolveBody(BaseModel):
@@ -29,7 +44,12 @@ def _status_for_payload(data: dict) -> int:
 
 @app.get("/health")
 async def health() -> dict[str, str]:
-    return {"status": "ok", "engine": ENGINE}
+    return {
+        "status": "ok",
+        "engine": ENGINE,
+        "serviceVersion": _service_version(),
+        "libraryVersion": _library_version(),
+    }
 
 
 async def _resolve(did: str) -> JSONResponse:

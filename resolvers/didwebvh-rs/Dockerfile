@@ -1,7 +1,7 @@
 # MSRV follows didwebvh-rs (see upstream Cargo.toml rust-version).
 FROM rust:1-bookworm AS builder
 WORKDIR /app
-COPY Cargo.toml ./
+COPY Cargo.toml build.rs ./
 COPY src ./src
 RUN cargo build --release
 

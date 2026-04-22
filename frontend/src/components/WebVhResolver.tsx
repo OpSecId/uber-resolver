@@ -326,11 +326,22 @@ export function WebVhResolver() {
               {health.map((h) => (
                 <Badge
                   key={h.engine}
-                  className="gap-1 font-mono text-xs"
+                  className="h-auto min-w-0 max-w-full flex-col items-stretch gap-0.5 py-1.5 text-left font-mono text-xs"
                   variant={h.ok ? 'default' : 'outline'}
                 >
-                  {h.engine}
-                  {h.ok && h.health ? ` · ${h.health.engine}` : !h.ok ? ` · ${h.detail ?? 'down'}` : null}
+                  <span className="font-medium">{h.engine}</span>
+                  {h.ok && h.health ? (
+                    <span className="block font-normal opacity-90 text-[10px] leading-snug">
+                      svc {h.health.serviceVersion ?? '—'}
+                      {h.health.libraryVersion != null && h.health.libraryVersion !== ''
+                        ? ` · lib ${h.health.libraryVersion}`
+                        : null}
+                    </span>
+                  ) : !h.ok ? (
+                    <span className="block font-normal text-[10px] leading-snug">
+                      {h.detail ?? 'down'}
+                    </span>
+                  ) : null}
                 </Badge>
               ))}
             </div>

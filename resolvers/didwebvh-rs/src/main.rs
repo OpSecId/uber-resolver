@@ -26,9 +26,12 @@ struct ResolveQuery {
 }
 
 #[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
 struct Health {
     status: &'static str,
     engine: &'static str,
+    service_version: &'static str,
+    library_version: &'static str,
 }
 
 fn w3c_success(did: &str, document: serde_json::Value, doc_meta: serde_json::Value) -> serde_json::Value {
@@ -117,6 +120,8 @@ async fn health() -> Json<Health> {
     Json(Health {
         status: "ok",
         engine: "didwebvh-rs",
+        service_version: env!("CARGO_PKG_VERSION"),
+        library_version: env!("DIDWEBVH_RS_DECLARED_VERSION"),
     })
 }
 

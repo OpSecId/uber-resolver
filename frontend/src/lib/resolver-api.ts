@@ -36,6 +36,8 @@ export function engineBaseUrl(engine: EngineId): string {
 export type HealthResponse = {
   status: string
   engine: string
+  serviceVersion?: string
+  libraryVersion?: string
 }
 
 export async function fetchHealth(engine: EngineId): Promise<HealthResponse> {
