@@ -5,6 +5,9 @@ import react from '@vitejs/plugin-react'
 const engine = (port: number) => ({
   target: `http://127.0.0.1:${port}`,
   changeOrigin: true,
+  // Avoid proxy-side socket hangs when backends are slow to accept (e.g. Rust cold start).
+  timeout: 120_000,
+  proxyTimeout: 120_000,
 })
 
 // https://vite.dev/config/

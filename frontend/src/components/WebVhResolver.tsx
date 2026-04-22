@@ -29,9 +29,25 @@ type Mode = 'single' | 'compare'
 
 type EngineHealth = { engine: EngineId; ok: boolean; detail?: string; health?: HealthResponse }
 
-function healthErrorMessage(err: unknown): string {
+function isTimeoutOrAbort(err: unknown): boolean {
   if (err instanceof DOMException && err.name === 'AbortError') {
-    return 'Timed out (is the resolver running?)'
+    return true
+  }
+  if (err instanceof Error) {
+    if (err.name === 'AbortError') {
+      return true
+    }
+    const m = err.message.toLowerCase()
+    if (m.includes('timeout') || m.includes('aborted') || m.includes('signal timed')) {
+      return true
+    }
+  }
+  return false
+}
+
+function healthErrorMessage(err: unknown): string {
+  if (isTimeoutOrAbort(err)) {
+    return 'Timed out — this engine may still be starting, or nothing is listening on its port (Rust defaults to 8081).'
   }
   if (err instanceof TypeError) {
     return 'Network error — start resolvers on 8081–8083, or run docker compose up from the repo root (Vite dev proxy only when using npm run dev).'
@@ -43,21 +59,22 @@ function healthErrorMessage(err: unknown): string {
 }
 
 async function probeEngines(): Promise<EngineHealth[]> {
-  const results = await Promise.all(
-    ENGINES.map(async (e) => {
-      try {
-        const h = await fetchHealth(e)
-        return { engine: e, ok: true as const, health: h }
-      } catch (err) {
-        return {
-          engine: e,
-          ok: false as const,
-          detail: healthErrorMessage(err),
-        }
-      }
-    }),
-  )
-  return results
+  const next: EngineHealth[] = []
+  // Sequential: parallel probes can starve the Rust service on cold Docker/compose
+  // (heavy binary + shared CPU) and make /health look flaky while py/ts stay fast.
+  for (const e of ENGINES) {
+    try {
+      const h = await fetchHealth(e)
+      next.push({ engine: e, ok: true as const, health: h })
+    } catch (err) {
+      next.push({
+        engine: e,
+        ok: false as const,
+        detail: healthErrorMessage(err),
+      })
+    }
+  }
+  return next
 }
 
 function formatJson(value: unknown): string {

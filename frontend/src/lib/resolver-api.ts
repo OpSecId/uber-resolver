@@ -39,9 +39,12 @@ export type HealthResponse = {
   libraryVersion?: string
 }
 
+/** Health checks tolerate slow cold starts (e.g. Rust image / first bind under compose). */
+const HEALTH_TIMEOUT_MS = 25_000
+
 export async function fetchHealth(engine: EngineId): Promise<HealthResponse> {
   const res = await fetch(`${engineBaseUrl(engine)}/health`, {
-    signal: requestTimeout(8000),
+    signal: requestTimeout(HEALTH_TIMEOUT_MS),
   })
   if (!res.ok) {
     throw new Error(`Health check failed (${res.status})`)
