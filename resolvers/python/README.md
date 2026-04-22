@@ -1,11 +1,20 @@
 # Python resolver (`did:webvh`)
 
-Thin HTTP service (e.g. FastAPI) that uses **[didwebvh-py](https://github.com/decentralized-identity/didwebvh-py)**.
+HTTP service on **`POST /resolve`** and **`GET /resolve?did=`** using the **[did-webvh](https://pypi.org/project/did-webvh/)** package (from [didwebvh-py](https://github.com/decentralized-identity/didwebvh-py)).
 
-Upstream documents CLI resolution:
+## Run (local)
 
 ```bash
-python3 -m did_webvh.resolver "did:webvh:…"
+cd resolvers/python
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e .
+uber-resolver-python
+# or: uvicorn uber_resolver_py.app:app --host 0.0.0.0 --port 8082
 ```
 
-The HTTP adapter should call the same library entry points the resolver module uses (avoid parsing CLI output in production). Install via **Poetry** as in upstream `pyproject.toml`.
+Default port **8082** (override with `PORT`).
+
+## Dependency
+
+Bump **`did-webvh`** in `pyproject.toml` to pick up new upstream releases.

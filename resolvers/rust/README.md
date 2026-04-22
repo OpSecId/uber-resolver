@@ -1,7 +1,24 @@
 # Rust resolver (`did:webvh`)
 
-Thin HTTP service (e.g. Axum) that uses **[didwebvh-rs](https://github.com/decentralized-identity/didwebvh-rs)** as a library dependency.
+HTTP service on **`POST /resolve`** and **`GET /resolve?did=`** using **[didwebvh-rs](https://crates.io/crates/didwebvh-rs)** ([repo](https://github.com/decentralized-identity/didwebvh-rs)).
 
-Upstream documents a **`resolve`** example: `cargo run --example resolve -- <DID>` — the resolver API here should invoke the same resolution path the example uses, then serialize the result for the gateway.
+## Run (local)
 
-**Crate:** follow upstream `Cargo.toml` (crate name and features may change with releases; pin a version for reproducible comparisons across the three engines).
+Requires **Rust ≥ 1.94** (matches upstream `didwebvh-rs` MSRV).
+
+```bash
+cd resolvers/rust
+cargo run
+# listens on PORT or 8081
+```
+
+## Docker
+
+```bash
+docker build -t uber-resolver-rust .
+docker run --rm -p 8081:8081 uber-resolver-rust
+```
+
+## Dependency
+
+Bump **`didwebvh-rs`** in `Cargo.toml` (and features, e.g. `rustls` vs `native-tls`) when upgrading.

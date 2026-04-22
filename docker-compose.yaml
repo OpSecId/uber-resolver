@@ -1,0 +1,23 @@
+# Three resolver microservices (same /resolve + /health API).
+# Default ports: Rust 8081, Python 8082, TypeScript 8083.
+services:
+  resolver-rust:
+    build: ./resolvers/rust
+    ports:
+      - "8081:8081"
+    environment:
+      PORT: "8081"
+
+  resolver-python:
+    build: ./resolvers/python
+    ports:
+      - "8082:8082"
+    environment:
+      PORT: "8082"
+
+  resolver-typescript:
+    build: ./resolvers/typescript
+    ports:
+      - "8083:8083"
+    environment:
+      PORT: "8083"

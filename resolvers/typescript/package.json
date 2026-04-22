@@ -1,0 +1,17 @@
+{
+  "name": "uber-resolver-typescript",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/server.mjs",
+    "dev": "node --watch src/server.mjs"
+  },
+  "dependencies": {
+    "didwebvh-ts": "^2.7.3",
+    "express": "^5.0.1"
+  }
+}

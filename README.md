@@ -26,9 +26,31 @@ See [docs/REFERENCE_IMPLEMENTATIONS.md](docs/REFERENCE_IMPLEMENTATIONS.md) for i
 - **Separate processes** (containers), not one polyglot binary.
 - **Delegation** via gateway: `resolver` field or header (`rust` \| `python` \| `ts` \| `auto`).
 
+## Run the three resolvers (local)
+
+| Service | Port | Command |
+|---------|------|---------|
+| Rust | `8081` | `cd resolvers/rust && cargo run` |
+| Python | `8082` | `cd resolvers/python && python3 -m venv .venv && . .venv/bin/activate && pip install -e . && uber-resolver-python` |
+| TypeScript | `8083` | `cd resolvers/typescript && npm install && npm start` |
+
+**API (each service):**
+
+- `GET /health` — `{ "status": "ok", "engine": "rust" \| "python" \| "typescript" }`
+- `POST /resolve` — JSON body `{ "did": "did:webvh:…" }`
+- `GET /resolve?did=did:webvh:…` — convenience alias
+
+Response shape follows W3C DID Resolution where applicable; see [`contracts/openapi.yaml`](contracts/openapi.yaml).
+
+**Docker Compose** (builds all three):
+
+```bash
+docker compose up --build
+```
+
 ## Status
 
-Repository scaffold only — implementations and CI to follow.
+Resolver microservices implemented; gateway and golden-vector CI still optional follow-ups.
 
 ## License
 

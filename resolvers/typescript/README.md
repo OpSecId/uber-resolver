@@ -1,7 +1,25 @@
 # TypeScript resolver (`did:webvh`)
 
-Thin HTTP service that calls **[didwebvh-ts](https://github.com/decentralized-identity/didwebvh-ts)**.
+HTTP service on **`POST /resolve`** and **`GET /resolve?did=`** using **[didwebvh-ts](https://www.npmjs.com/package/didwebvh-ts)** ([repo](https://github.com/decentralized-identity/didwebvh-ts)).
 
-Upstream exposes `resolveDID(did, options?)` and example HTTP servers (Express / Elysia) under `examples/` — this repo should follow the same pattern: one route, map errors to HTTP status, return JSON suitable for gateway normalization.
+## Run (local)
 
-**Dependency:** add the upstream package **`didwebvh-ts`** from npm (see [didwebvh-ts](https://github.com/decentralized-identity/didwebvh-ts) `package.json` / install instructions).
+Requires **Node ≥ 20**.
+
+```bash
+cd resolvers/typescript
+npm install
+npm start
+# listens on PORT or 8083
+```
+
+## Docker
+
+```bash
+docker build -t uber-resolver-ts .
+docker run --rm -p 8083:8083 uber-resolver-ts
+```
+
+## Dependency
+
+Bump **`didwebvh-ts`** in `package.json` when upgrading.

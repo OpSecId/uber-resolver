@@ -1,0 +1,85 @@
+openapi: 3.1.0
+info:
+  title: uber-resolver micro API
+  version: 0.1.0
+  description: |
+    Shared contract for `resolvers/rust`, `resolvers/python`, and `resolvers/typescript`.
+    Each service implements the same paths; swap host/port to change engine.
+servers:
+  - url: http://localhost:8081
+    description: Rust (default local port in compose)
+paths:
+  /health:
+    get:
+      summary: Liveness
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  engine:
+                    type: string
+                    enum: [rust, python, typescript]
+  /resolve:
+    post:
+      summary: Resolve a did:webvh DID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResolveRequest'
+      responses:
+        '200':
+          description: W3C DID Resolution result (success)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResolveSuccess'
+        '400':
+          description: Invalid input or resolution error
+        '404':
+          description: DID or log not found
+        '502':
+          description: Upstream / dependency failure (engine-specific)
+    get:
+      summary: Resolve via query string (convenience)
+      parameters:
+        - in: query
+          name: did
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Same as POST
+components:
+  schemas:
+    ResolveRequest:
+      type: object
+      required: [did]
+      properties:
+        did:
+          type: string
+          description: did:webvh identifier (may include resolution parameters per method)
+          example: did:webvh:QmExample:example.com
+    ResolveSuccess:
+      type: object
+      required: [didDocument, didResolutionMetadata, didDocumentMetadata]
+      properties:
+        '@context':
+          type: string
+          example: https://w3id.org/did-resolution/v1
+        didDocument:
+          description: DID document JSON object, or null on error-shaped 200 (engines should prefer 4xx)
+          nullable: true
+        didDocumentMetadata:
+          type: object
+        didResolutionMetadata:
+          type: object

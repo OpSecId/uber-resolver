@@ -15,6 +15,7 @@ resolvers/rust/target/
 # Python
 resolvers/python/.venv/
 resolvers/python/__pycache__/
+resolvers/python/src/**/*.egg-info/
 **/*.py[cod]
 **/.pytest_cache/
 **/.mypy_cache/

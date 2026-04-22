@@ -1,0 +1,21 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "uber-resolver-python"
+version = "0.1.0"
+description = "Thin HTTP resolver for did:webvh using did-webvh (Python)"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+dependencies = [
+  "did-webvh>=1.0,<2",
+  "fastapi>=0.115",
+  "uvicorn[standard]>=0.32",
+]
+
+[project.scripts]
+uber-resolver-python = "uber_resolver_py.app:run"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/uber_resolver_py"]
