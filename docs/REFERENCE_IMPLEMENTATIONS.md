@@ -17,4 +17,4 @@ The three codebases evolve independently. For **comparable** behavior across ube
 
 ## Licensing note
 
-Upstream repos use **Apache-2.0** (verify on each repo). This umbrella repo currently uses **MIT**; if you vendor or redistribute large portions of upstream code, reconcile licenses (e.g. move uber-resolver to Apache-2.0 to match, or keep MIT and only depend on crates/packages as normal dependencies).
+This repository is **Apache-2.0**, consistent with **[didwebvh-ts](https://github.com/decentralized-identity/didwebvh-ts)**, **[didwebvh-rs](https://github.com/decentralized-identity/didwebvh-rs)**, and **[didwebvh-py](https://github.com/decentralized-identity/didwebvh-py)** (confirm current SPDX on each upstream repo when upgrading pins). Normal **dependency** use (crates.io / npm / PyPI) does not require vendoring; if you copy substantial upstream source into this tree, preserve their copyright and license headers as required.
