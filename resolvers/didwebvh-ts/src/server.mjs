@@ -3,24 +3,30 @@
  * @see https://github.com/decentralized-identity/didwebvh-ts
  */
 
-import { createRequire } from 'node:module';
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import express from 'express';
 import { resolveDID } from 'didwebvh-ts';
-
-const require = createRequire(import.meta.url);
 
 const ENGINE = 'didwebvh-ts';
 const PORT = Number(process.env.PORT || 8083);
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
 let SERVICE_VERSION = '0.1.0';
 let LIBRARY_VERSION = 'unknown';
 try {
-  ({ version: SERVICE_VERSION } = require('../package.json'));
+  SERVICE_VERSION = JSON.parse(
+    readFileSync(join(__dirname, '../package.json'), 'utf8'),
+  ).version;
 } catch {
   /* ignore */
 }
 try {
-  ({ version: LIBRARY_VERSION } = require('didwebvh-ts/package.json'));
+  LIBRARY_VERSION = JSON.parse(
+    readFileSync(join(__dirname, '../node_modules/didwebvh-ts/package.json'), 'utf8'),
+  ).version;
 } catch {
   /* ignore */
 }

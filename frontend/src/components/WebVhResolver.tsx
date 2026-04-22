@@ -63,6 +63,15 @@ function formatJson(value: unknown): string {
   return JSON.stringify(value, null, 2)
 }
 
+/** Library / upstream version for display (e.g. `didwebvh-rs - 0.5`). */
+function displayLibraryVersion(health: HealthResponse): string {
+  const lib = health.libraryVersion?.trim()
+  if (lib && lib !== 'unknown') {
+    return lib
+  }
+  return health.serviceVersion?.trim() || '—'
+}
+
 function extractDocParts(payload: ResolvePayload | string | null) {
   if (!payload || typeof payload === 'string') {
     return { doc: null, resMeta: null, docMeta: null, raw: payload }
@@ -322,23 +331,22 @@ export function WebVhResolver() {
               {health.map((h) => (
                 <Badge
                   key={h.engine}
-                  className="h-auto min-w-0 max-w-full flex-col items-stretch gap-0.5 py-1.5 text-left font-mono text-xs"
+                  className="h-auto min-w-0 max-w-full py-1.5 text-left font-mono text-xs"
                   variant={h.ok ? 'default' : 'outline'}
                 >
-                  <span className="font-medium">{h.engine}</span>
                   {h.ok && h.health ? (
-                    <span className="block font-normal opacity-90 text-[10px] leading-snug">
-                      svc {h.health.serviceVersion ?? '—'}
-                      {h.health.libraryVersion != null && h.health.libraryVersion !== ''
-                        ? ` · lib ${h.health.libraryVersion}`
-                        : null}
+                    <span className="font-medium">
+                      {h.engine} - {displayLibraryVersion(h.health)}
                     </span>
-                  ) : !h.ok ? (
-                    <span className="block font-normal text-[10px] leading-snug">
-                      {h.detail ??
-                        (lastHealthAt === null ? 'Checking…' : 'No response from resolver')}
+                  ) : (
+                    <span className="flex flex-col gap-0.5">
+                      <span className="font-medium">{h.engine}</span>
+                      <span className="font-normal text-[10px] leading-snug opacity-90">
+                        {h.detail ??
+                          (lastHealthAt === null ? 'Checking…' : 'No response from resolver')}
+                      </span>
                     </span>
-                  ) : null}
+                  )}
                 </Badge>
               ))}
             </div>
