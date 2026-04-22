@@ -21,3 +21,19 @@ services:
       - "8083:8083"
     environment:
       PORT: "8083"
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - resolver-didwebvh-rs
+      - resolver-didwebvh-py
+      - resolver-didwebvh-ts
+    environment:
+      ENGINE_RS_HOST: resolver-didwebvh-rs
+      ENGINE_RS_PORT: "8081"
+      ENGINE_PY_HOST: resolver-didwebvh-py
+      ENGINE_PY_PORT: "8082"
+      ENGINE_TS_HOST: resolver-didwebvh-ts
+      ENGINE_TS_PORT: "8083"

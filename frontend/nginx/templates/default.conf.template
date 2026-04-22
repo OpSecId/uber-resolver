@@ -1,0 +1,43 @@
+# SPA + API proxy (same paths as Vite dev server).
+# Substituted by the official nginx image entrypoint: ENGINE_*_HOST default to docker-compose service names.
+
+server {
+    listen 80;
+    server_name localhost;
+    root /usr/share/nginx/html;
+    index index.html;
+
+    gzip on;
+    gzip_types text/plain text/css application/javascript application/json;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    location /engine/didwebvh-rs/ {
+        proxy_pass http://${ENGINE_RS_HOST}:${ENGINE_RS_PORT}/;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location /engine/didwebvh-py/ {
+        proxy_pass http://${ENGINE_PY_HOST}:${ENGINE_PY_PORT}/;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location /engine/didwebvh-ts/ {
+        proxy_pass http://${ENGINE_TS_HOST}:${ENGINE_TS_PORT}/;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}

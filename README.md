@@ -21,7 +21,7 @@ See [docs/REFERENCE_IMPLEMENTATIONS.md](docs/REFERENCE_IMPLEMENTATIONS.md) for i
 | `resolvers/didwebvh-py/` | Python resolver HTTP service (didwebvh-py). |
 | `resolvers/didwebvh-ts/` | TypeScript (Node) resolver HTTP service (didwebvh-ts). |
 | `contracts/` | Shared request/response schema (e.g. OpenAPI or JSON Schema) + golden test vectors. |
-| `frontend/` | React + shadcn playground for `did:webvh` resolution (proxies to the three engines in dev). |
+| `frontend/` | React + shadcn playground; `frontend/Dockerfile` serves static assets and proxies `/engine/didwebvh-*` in production. |
 
 ## Principles
 
@@ -45,7 +45,7 @@ See [docs/REFERENCE_IMPLEMENTATIONS.md](docs/REFERENCE_IMPLEMENTATIONS.md) for i
 
 Response shape follows W3C DID Resolution where applicable; see [`contracts/openapi.yaml`](contracts/openapi.yaml).
 
-**Docker Compose** (builds all three):
+**Docker Compose** (resolvers + optional **frontend** on [http://localhost:3000](http://localhost:3000)):
 
 ```bash
 docker compose up --build
