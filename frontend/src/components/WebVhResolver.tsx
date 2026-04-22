@@ -4,7 +4,7 @@ import { AlertCircle, GitBranch, Loader2, Sparkles } from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import {
   Select,
@@ -234,10 +234,6 @@ export function WebVhResolver() {
             <GitBranch className="size-5" aria-hidden />
             Resolve
           </CardTitle>
-          <CardDescription>
-            Run resolvers via the Vite dev proxy (<code className="text-xs">/engine/…</code>) or set{' '}
-            <code className="text-xs">VITE_ENGINE_*</code> in <code className="text-xs">.env</code>.
-          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
