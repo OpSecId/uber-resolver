@@ -4,7 +4,7 @@ import { AlertCircle, GitBranch, Loader2, Sparkles } from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import {
   Select,
@@ -234,28 +234,44 @@ export function WebVhResolver() {
 
   return (
     <div className="mx-auto flex min-h-screen max-w-4xl flex-col gap-8 px-4 py-10">
-      <header className="space-y-2 text-center sm:text-left">
-        <div className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-1 text-xs text-muted-foreground">
-          <Sparkles className="size-3.5 text-primary" aria-hidden />
-          did:webvh only — same contract as the three resolver microservices
-        </div>
-        <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">WebVH resolver</h1>
-        <p className="max-w-2xl text-sm text-muted-foreground sm:text-base">
-          Resolve a <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">did:webvh</code>{' '}
-          identifier against{' '}
-          <span className="font-medium text-foreground">didwebvh-rs</span>,{' '}
-          <span className="font-medium text-foreground">didwebvh-py</span>, or{' '}
-          <span className="font-medium text-foreground">didwebvh-ts</span>. Inspired by the{' '}
-          <a
-            className="text-primary underline-offset-4 hover:underline"
-            href="https://dev.uniresolver.io/"
-            rel="noreferrer"
-            target="_blank"
-          >
-            Universal Resolver
-          </a>{' '}
-          playground, scoped to WebVH implementations in this repo.
-        </p>
+      <header className="space-y-4 text-center sm:text-left">
+        <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Uber Resolver</h1>
+        <Card className="border-primary/15 bg-gradient-to-b from-card to-muted/30 text-left shadow-sm">
+          <CardHeader className="space-y-2 pb-2">
+            <div className="flex items-center gap-2">
+              <Sparkles className="size-5 shrink-0 text-primary" aria-hidden />
+              <CardTitle className="text-lg font-medium leading-snug sm:text-xl">
+                did:webvh, three ways
+              </CardTitle>
+            </div>
+            <CardDescription className="max-w-2xl text-base leading-relaxed text-muted-foreground">
+              This page is a gentle front door to the same three resolver services: call one engine
+              at a time, or compare results in parallel. Everything here speaks{' '}
+              <code className="rounded bg-background/80 px-1.5 py-0.5 font-mono text-[0.8em]">
+                did:webvh
+              </code>{' '}
+              and uses the community{' '}
+              <span className="font-medium text-foreground">didwebvh-rs</span>,{' '}
+              <span className="font-medium text-foreground">didwebvh-py</span>, and{' '}
+              <span className="font-medium text-foreground">didwebvh-ts</span> libraries—handy when
+              you want to see how a DID looks across implementations without juggling URLs and
+              ports yourself.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="pb-4 pt-0 text-sm leading-relaxed text-muted-foreground">
+            If you have used the{' '}
+            <a
+              className="text-foreground underline decoration-primary/40 underline-offset-2 hover:decoration-primary"
+              href="https://dev.uniresolver.io/"
+              rel="noreferrer"
+              target="_blank"
+            >
+              Universal Resolver
+            </a>{' '}
+            demo before, this should feel familiar—just narrowed to WebVH and the engines shipped in
+            this repository.
+          </CardContent>
+        </Card>
       </header>
 
       <Card>
