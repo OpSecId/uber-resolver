@@ -444,10 +444,6 @@ export function WebVhResolver() {
           ) : null}
         </CardContent>
       </Card>
-
-      <footer className="pb-8 text-center text-xs text-muted-foreground">
-        OpenAPI contract: <code className="rounded bg-muted px-1 py-0.5">contracts/openapi.yaml</code>
-      </footer>
     </div>
   )
 }
